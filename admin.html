@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airtable Replicator — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .spinner { border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.6s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="max-w-2xl mx-auto py-10 px-4">
+
+  <h1 class="text-2xl font-bold text-gray-900 mb-1">Airtable Replicator — Admin</h1>
+  <p class="text-gray-500 text-sm mb-8">Generate student install pages from your Airtable bases. No terminal needed.</p>
+
+  <!-- Settings (saved to localStorage) -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">Your Settings</h2>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="admin-key">Personal Access Token</label>
+      <input type="password" id="admin-key" placeholder="patXXXXXXXXXXXXXXXX.XXXXXXX"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <p class="text-xs text-gray-500 mt-1">Saved locally in your browser. Never sent anywhere except Airtable's API (via your proxy).</p>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="admin-proxy">CORS Proxy URL</label>
+      <input type="text" id="admin-proxy" placeholder="https://airtable-replicator-proxy.8digit.workers.dev"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <p class="text-xs text-gray-500 mt-1">Your Cloudflare Worker URL. Saved for future visits.</p>
+    </div>
+
+    <button id="save-settings" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Save settings</button>
+    <span id="save-confirm" class="text-sm text-green-600 ml-2 hidden">Saved!</span>
+  </div>
+
+  <!-- Generate Form -->
+  <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">Generate Install Page</h2>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="gen-base">Base ID</label>
+      <input type="text" id="gen-base" placeholder="appXXXXXXXXXXXXXX"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <p class="text-xs text-gray-500 mt-1">Open your base in Airtable → the ID is in the URL: airtable.com/<strong>appXXXXXX</strong>/...</p>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="gen-name">Course / Base Name</label>
+      <input type="text" id="gen-name" placeholder="AI Video+B-Roll Agent"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <p class="text-xs text-gray-500 mt-1">This name appears in the student install page header and in the downloaded filename.</p>
+    </div>
+
+    <button id="generate-btn"
+      class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+      Fetch Schema & Generate HTML
+    </button>
+  </div>
+
+  <!-- Status -->
+  <div id="status-section" class="hidden mb-6">
+    <div class="flex items-center gap-2 mb-3">
+      <div id="status-spinner" class="spinner"></div>
+      <span id="status-text" class="text-gray-700 text-sm">Fetching schema...</span>
+    </div>
+  </div>
+
+  <!-- Schema Preview + Download -->
+  <div id="result-section" class="hidden">
+    <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-4">
+      <h2 class="text-green-800 text-lg font-semibold mb-2">Install page ready!</h2>
+      <div id="schema-summary" class="text-green-700 text-sm mb-4"></div>
+      <button id="download-btn"
+        class="bg-green-600 text-white py-2 px-4 rounded-md font-medium hover:bg-green-700 transition-colors">
+        Download HTML File
+      </button>
+      <p class="text-xs text-gray-500 mt-2">Or host it on GitHub Pages / your LMS so students just click a link.</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-section" class="hidden mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+    <p id="error-text" class="text-red-700 text-sm"></p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Field type classifications (mirrors export-schema.js) ──
+  const NON_CREATABLE_TYPES = new Set(["formula", "rollup", "multipleLookupValues", "count"]);
+  const AUTO_SYSTEM_TYPES = new Set(["autoNumber", "createdTime", "lastModifiedTime", "createdBy", "lastModifiedBy"]);
+  const LINK_TYPE = "multipleRecordLinks";
+
+  // ── LocalStorage persistence ──
+  const keyEl = document.getElementById("admin-key");
+  const proxyEl = document.getElementById("admin-proxy");
+
+  // Load saved settings
+  keyEl.value = localStorage.getItem("atr_key") || "";
+  proxyEl.value = localStorage.getItem("atr_proxy") || "";
+
+  document.getElementById("save-settings").addEventListener("click", () => {
+    localStorage.setItem("atr_key", keyEl.value.trim());
+    localStorage.setItem("atr_proxy", proxyEl.value.trim());
+    const confirm = document.getElementById("save-confirm");
+    confirm.classList.remove("hidden");
+    setTimeout(() => confirm.classList.add("hidden"), 2000);
+  });
+
+  // ── Airtable API via proxy ──
+  async function airtableGet(path, apiKey, proxyUrl) {
+    const targetUrl = `https://api.airtable.com/v0${path}`;
+    const res = await fetch(proxyUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+        "X-Airtable-Target-Url": targetUrl,
+        "X-Airtable-Method": "GET",
+      },
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
+    return data;
+  }
+
+  // ── Schema processing (same logic as CLI export-schema.js) ──
+  function classifyField(field) {
+    if (NON_CREATABLE_TYPES.has(field.type)) return "manual";
+    if (AUTO_SYSTEM_TYPES.has(field.type)) return "autoSystem";
+    if (field.type === LINK_TYPE) {
+      return field.options?.isReversed ? "inverseLink" : "link";
+    }
+    return "creatable";
+  }
+
+  function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+
+  function buildManualInstructions(field) {
+    const typeLabel = field.type === "multipleLookupValues" ? "Lookup" : capitalize(field.type);
+    let configSummary = "";
+
+    switch (field.type) {
+      case "formula":
+        configSummary = field.options?.formula
+          ? `Formula: ${field.options.formula}`
+          : "Formula: (not available — check the original base)";
+        break;
+      case "rollup":
+        configSummary = [
+          field.options?.fieldIdInLinkedTable ? `Summarize field: ${field.options.fieldIdInLinkedTable}` : null,
+          field.options?.recordLinkFieldId ? `From linked record field: ${field.options.recordLinkFieldId}` : null,
+          field.options?.result?.formula ? `Aggregation: ${field.options.result.formula}` : null,
+        ].filter(Boolean).join("\n");
+        if (!configSummary) configSummary = "(check the original base for rollup configuration)";
+        break;
+      case "multipleLookupValues":
+        configSummary = [
+          field.options?.fieldIdInLinkedTable ? `Lookup field: ${field.options.fieldIdInLinkedTable}` : null,
+          field.options?.recordLinkFieldId ? `From linked record field: ${field.options.recordLinkFieldId}` : null,
+        ].filter(Boolean).join("\n");
+        if (!configSummary) configSummary = "(check the original base for lookup configuration)";
+        break;
+      case "count":
+        configSummary = field.options?.recordLinkFieldId
+          ? `Count records from linked field: ${field.options.recordLinkFieldId}`
+          : "(check the original base for count configuration)";
+        break;
+      default:
+        configSummary = "(check the original base for configuration)";
+    }
+
+    const description = `⚠️ MANUAL SETUP REQUIRED — ${typeLabel}: ${configSummary.split("\\n")[0]}`;
+    const cellInstructions = [
+      `⚠️ MANUAL SETUP REQUIRED`, ``,
+      `Field type: ${typeLabel} (currently Long Text — you must change it)`, ``,
+      configSummary, ``,
+      `Steps:`,
+      `1. Click this field's column header`,
+      `2. Select "Customize field type"`,
+      `3. Change the type from "Long text" to "${typeLabel}"`,
+      `4. Configure using the information above`,
+      `5. Click "Save"`,
+      `6. Delete this instruction row when you're done with ALL fields in this table`,
+    ].join("\n");
+
+    return { description, cellInstructions };
+  }
+
+  function processSchema(rawSchema, baseName) {
+    const tables = rawSchema.tables.map((table) => {
+      const creatableFields = [], linkFields = [], manualFields = [], inverseLinkFields = [], autoSystemFields = [];
+
+      for (const field of table.fields) {
+        const category = classifyField(field);
+        const cleanField = { originalId: field.id, name: field.name, type: field.type, description: field.description || "" };
+
+        if (field.options) {
+          cleanField.options = JSON.parse(JSON.stringify(field.options));
+          if (cleanField.options.choices) {
+            cleanField.options.choices = cleanField.options.choices.map(({ name, color }) => {
+              const c = { name }; if (color) c.color = color; return c;
+            });
+          }
+        }
+
+        switch (category) {
+          case "creatable": creatableFields.push(cleanField); break;
+          case "link":
+            cleanField.linkedTableId = field.options?.linkedTableId;
+            cleanField.prefersSingleRecordLink = field.options?.prefersSingleRecordLink || false;
+            linkFields.push(cleanField); break;
+          case "manual": {
+            const instructions = buildManualInstructions(field);
+            cleanField.manualType = field.type === "multipleLookupValues" ? "Lookup" : capitalize(field.type);
+            cleanField.manualDescription = instructions.description;
+            cleanField.manualCellInstructions = instructions.cellInstructions;
+            cleanField.originalOptions = field.options || {};
+            manualFields.push(cleanField); break;
+          }
+          case "autoSystem": autoSystemFields.push(cleanField); break;
+          case "inverseLink": inverseLinkFields.push(cleanField); break;
+        }
+      }
+
+      return {
+        originalId: table.id, name: table.name, description: table.description || "",
+        primaryFieldId: table.primaryFieldId,
+        creatableFields, linkFields, manualFields, autoSystemFields, inverseLinkFields,
+      };
+    });
+
+    // Resolve linked table names
+    const tableIdToName = {};
+    for (const t of tables) tableIdToName[t.originalId] = t.name;
+    for (const t of tables) {
+      for (const lf of t.linkFields) {
+        lf.linkedTableName = tableIdToName[lf.linkedTableId] || lf.linkedTableId;
+      }
+      // Resolve field references in manual field instructions
+      for (const mf of t.manualFields) {
+        if (mf.originalOptions?.recordLinkFieldId) {
+          for (const t2 of tables) {
+            for (const f of [...t2.creatableFields, ...t2.linkFields]) {
+              if (f.originalId === mf.originalOptions.recordLinkFieldId) {
+                mf.manualCellInstructions = mf.manualCellInstructions.replace(mf.originalOptions.recordLinkFieldId, `"${f.name}" field`);
+                mf.manualDescription = mf.manualDescription.replace(mf.originalOptions.recordLinkFieldId, `"${f.name}" field`);
+              }
+            }
+          }
+        }
+        if (mf.originalOptions?.fieldIdInLinkedTable) {
+          for (const t2 of tables) {
+            for (const f of [...t2.linkFields, ...t2.inverseLinkFields]) {
+              if (f.originalId === mf.originalOptions?.recordLinkFieldId && f.linkedTableId) {
+                const linkedTable = tables.find((tt) => tt.originalId === f.linkedTableId);
+                if (linkedTable) {
+                  const linkedField = [...linkedTable.creatableFields, ...linkedTable.linkFields, ...linkedTable.manualFields]
+                    .find((ff) => ff.originalId === mf.originalOptions.fieldIdInLinkedTable);
+                  if (linkedField) {
+                    mf.manualCellInstructions = mf.manualCellInstructions.replace(mf.originalOptions.fieldIdInLinkedTable, `"${linkedField.name}" in "${linkedTable.name}"`);
+                    mf.manualDescription = mf.manualDescription.replace(mf.originalOptions.fieldIdInLinkedTable, `"${linkedField.name}" in "${linkedTable.name}"`);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return { name: baseName || "Airtable Base", exportedAt: new Date().toISOString(), tableCount: tables.length, tables };
+  }
+
+  // ── Load the install.html template ──
+  // We fetch the template from the same directory, or use an embedded fallback
+  let INSTALL_TEMPLATE = null;
+
+  async function loadTemplate() {
+    if (INSTALL_TEMPLATE) return INSTALL_TEMPLATE;
+    try {
+      // Try to load from relative path (works when hosted together)
+      const res = await fetch("template/install.html");
+      if (res.ok) {
+        INSTALL_TEMPLATE = await res.text();
+        return INSTALL_TEMPLATE;
+      }
+    } catch (e) {}
+    throw new Error("Could not load template/install.html. Make sure admin.html is in the project root directory.");
+  }
+
+  function generateHtml(template, schema, proxyUrl) {
+    let html = template.replace("__SCHEMA_DATA_PLACEHOLDER__", JSON.stringify(schema));
+    html = html.replace("__PROXY_URL_PLACEHOLDER__", proxyUrl);
+    return html;
+  }
+
+  function sanitizeFilename(name) {
+    return name.replace(/[^a-zA-Z0-9_\- ]/g, "").replace(/\s+/g, "-").toLowerCase();
+  }
+
+  // ── Generate button handler ──
+  let generatedHtml = null;
+  let generatedFilename = null;
+
+  document.getElementById("generate-btn").addEventListener("click", async () => {
+    const apiKey = keyEl.value.trim();
+    const proxyUrl = proxyEl.value.trim();
+    const baseId = document.getElementById("gen-base").value.trim();
+    const courseName = document.getElementById("gen-name").value.trim();
+
+    if (!apiKey) { alert("Enter your API key in Settings first."); return; }
+    if (!proxyUrl) { alert("Enter your CORS Proxy URL in Settings first."); return; }
+    if (!baseId || !baseId.startsWith("app")) { alert("Enter a valid Base ID (starts with 'app')."); return; }
+    if (!courseName) { alert("Enter a Course / Base Name."); return; }
+
+    // Save settings automatically
+    localStorage.setItem("atr_key", apiKey);
+    localStorage.setItem("atr_proxy", proxyUrl);
+
+    const btn = document.getElementById("generate-btn");
+    btn.disabled = true;
+    btn.textContent = "Fetching...";
+    document.getElementById("status-section").classList.remove("hidden");
+    document.getElementById("result-section").classList.add("hidden");
+    document.getElementById("error-section").classList.add("hidden");
+    document.getElementById("status-text").textContent = "Fetching schema from Airtable...";
+
+    try {
+      // Step 1: Fetch schema via proxy
+      const rawSchema = await airtableGet(`/meta/bases/${baseId}/tables`, apiKey, proxyUrl);
+      document.getElementById("status-text").textContent = `Found ${rawSchema.tables.length} table(s). Processing...`;
+
+      // Step 2: Process schema
+      const processed = processSchema(rawSchema, courseName);
+
+      // Step 3: Load template and generate HTML
+      document.getElementById("status-text").textContent = "Generating install page...";
+      const template = await loadTemplate();
+      generatedHtml = generateHtml(template, processed, proxyUrl);
+      generatedFilename = `install-${sanitizeFilename(courseName)}.html`;
+
+      // Step 4: Show result
+      document.getElementById("status-section").classList.add("hidden");
+      document.getElementById("result-section").classList.remove("hidden");
+
+      let summaryHtml = `<p><strong>${courseName}</strong> — ${processed.tableCount} table(s)</p><ul class="mt-2 space-y-1">`;
+      for (const t of processed.tables) {
+        const parts = [`${t.creatableFields.length} fields`];
+        if (t.linkFields.length > 0) parts.push(`${t.linkFields.length} link(s)`);
+        if (t.manualFields.length > 0) parts.push(`${t.manualFields.length} manual-setup`);
+        if (t.autoSystemFields.length > 0) parts.push(`${t.autoSystemFields.length} auto-system`);
+        summaryHtml += `<li>${t.name}: ${parts.join(", ")}</li>`;
+      }
+      summaryHtml += "</ul>";
+      summaryHtml += `<p class="mt-2">Filename: <code class="bg-green-100 px-1 rounded">${generatedFilename}</code></p>`;
+      document.getElementById("schema-summary").innerHTML = summaryHtml;
+
+    } catch (err) {
+      document.getElementById("status-section").classList.add("hidden");
+      document.getElementById("error-section").classList.remove("hidden");
+      document.getElementById("error-text").textContent = err.message;
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Fetch Schema & Generate HTML";
+  });
+
+  // ── Download button ──
+  document.getElementById("download-btn").addEventListener("click", () => {
+    if (!generatedHtml) return;
+    const blob = new Blob([generatedHtml], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = generatedFilename;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+})();
+</script>
+</body>
+</html>

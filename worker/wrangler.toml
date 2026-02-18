@@ -1,0 +1,6 @@
+name = "airtable-replicator-proxy"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+# Free tier: 100,000 requests/day
+# Deploy: cd worker && npx wrangler deploy

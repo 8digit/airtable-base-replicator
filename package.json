@@ -1,0 +1,6 @@
+{
+  "name": "airtable-base-replicator",
+  "version": "1.0.0",
+  "description": "Replicate Airtable base schemas for students — CLI exports schema, HTML files let students install it",
+  "private": true
+}

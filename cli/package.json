@@ -1,0 +1,12 @@
+{
+  "name": "airtable-replicator-cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "airtable-export": "./export-schema.js",
+    "airtable-generate": "./generate-html.js"
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  }
+}
