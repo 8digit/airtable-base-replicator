@@ -52,8 +52,15 @@ CURRENT_BRANCH=$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)
 TMPDIR=$(mktemp -d)
 trap "rm -rf $TMPDIR" EXIT
 
-# Clone just the gh-pages branch (shallow, fast)
-git clone --branch gh-pages --single-branch --depth 1 "$REPO_ROOT" "$TMPDIR/deploy" 2>/dev/null
+# Get the remote URL (GitHub) to clone from
+REMOTE_URL=$(git -C "$REPO_ROOT" remote get-url origin 2>/dev/null)
+if [ -z "$REMOTE_URL" ]; then
+  echo -e "${YELLOW}⚠️  No git remote 'origin' found. Set up the GitHub remote first.${NC}"
+  exit 1
+fi
+
+# Clone just the gh-pages branch from GitHub (shallow, fast)
+git clone --branch gh-pages --single-branch --depth 1 "$REMOTE_URL" "$TMPDIR/deploy" 2>/dev/null
 
 # Copy HTML files
 for f in "${FILES[@]}"; do
