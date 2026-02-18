@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airtable Schema Installer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .log-entry { animation: fadeIn 0.2s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .spinner { border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.6s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Schema data injected by generate-html.js -->
+  <script type="application/json" id="schema-data">{"name":"AI Video+B-Roll Agent","exportedAt":"2026-02-18T20:18:46.210Z","tableCount":3,"tables":[{"originalId":"tbl0u0PXSJ61Axdq1","name":"✅ Content","description":"","primaryFieldId":"fld9e2PvXJaxhFzuc","creatableFields":[{"originalId":"fld0Nawd09ha44Ev6","name":"Active","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fld0ULZp3SPo9Xg9X","name":"Media File","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fld9oaTAG4Yj4FMxT","name":"Media File 2","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fldfYs4q0cNTp8wlc","name":"user_request","type":"multilineText","description":""},{"originalId":"fldZcU9gsOJ8uN7mr","name":"Aspect Ratio","type":"singleSelect","description":"","options":{"choices":[{"name":"9:16","color":"blueLight2"},{"name":"16:9","color":"cyanLight2"},{"name":"1:1","color":"tealLight2"}]}},{"originalId":"fld5WbzizRCGEGztB","name":"Quality","type":"singleSelect","description":"","options":{"choices":[{"name":"HD","color":"blueLight2"},{"name":"4k","color":"cyanLight2"}]}},{"originalId":"fldZpzBC6a0dFVXPQ","name":"GO","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldzpa4wAKwcNr1zF","name":"Status","type":"singleSelect","description":"","options":{"choices":[{"name":"Queue","color":"blueLight2"},{"name":"In progress","color":"yellowLight2"},{"name":"Done","color":"greenLight2"}]}},{"originalId":"fld6BDGQVeb1OOVFn","name":"Music Prompt","type":"multilineText","description":""},{"originalId":"fldjtXtdr9nQ0LHnK","name":"Generate Music","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldiW24jkOeYrqGQj","name":"Music_1","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fldB7zjgEndf2gFfm","name":"Music_2","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fldA7rUSepYfNWRxg","name":"Width","type":"number","description":"","options":{"precision":0}},{"originalId":"fld5CMWGa8AEsoTme","name":"Height","type":"number","description":"","options":{"precision":0}},{"originalId":"fldPHPJsdKa2njBnR","name":"Video + B-Roll GO","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldZ0KqBScIV5WJN0","name":"Video + B-Roll","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fldfZsBDoL9xlqWM0","name":"Video SRT","type":"multilineText","description":""},{"originalId":"fldgOKnrxU2yEZiVk","name":"Transcript","type":"multilineText","description":""},{"originalId":"fldgRPjTcDeu0J5FW","name":"SRT ID","type":"singleLineText","description":""},{"originalId":"fld6lF4PBMUJv8JjD","name":"BROLL Style Analysis","type":"multilineText","description":""},{"originalId":"fldTbfEjmPOKdSvGW","name":"Video+Music GO","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldq6yfhHsXbZKKCJ","name":"Music Select","type":"singleSelect","description":"","options":{"choices":[{"name":"1","color":"blueLight2"},{"name":"2","color":"cyanLight2"}]}},{"originalId":"fldy7p6UK7GakOlEb","name":"Video+Music","type":"multipleAttachments","description":"","options":{"isReversed":false}}],"linkFields":[{"originalId":"fld1SBvW4moifNPjw","name":"⚡️ Segments","type":"multipleRecordLinks","description":"","options":{"linkedTableId":"tbleAOSiVLYV1AUQL","isReversed":false,"prefersSingleRecordLink":false,"inverseLinkFieldId":"fldn4qa0kCI6xewxo"},"linkedTableId":"tbleAOSiVLYV1AUQL","prefersSingleRecordLink":false,"linkedTableName":"⚡️ Segments"}],"manualFields":[{"originalId":"fld9e2PvXJaxhFzuc","name":"BROLL_ID","type":"formula","description":"","options":{"isValid":true,"formula":"\"B\"&{fldYA4dmKHEyfEC2N}","referencedFieldIds":["fldYA4dmKHEyfEC2N"],"result":{"type":"singleLineText"}},"manualType":"Formula","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Formula: Formula: \"B\"&{fldYA4dmKHEyfEC2N}","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Formula (currently Long Text — you must change it)\n\nFormula: \"B\"&{fldYA4dmKHEyfEC2N}\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Formula\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"formula":"\"B\"&{fldYA4dmKHEyfEC2N}","referencedFieldIds":["fldYA4dmKHEyfEC2N"],"result":{"type":"singleLineText"}}},{"originalId":"fldPHUQLV2cFZTqZc","name":"RECORD_ID","type":"formula","description":"","options":{"isValid":true,"formula":"RECORD_ID()","referencedFieldIds":[],"result":{"type":"singleLineText"}},"manualType":"Formula","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Formula: Formula: RECORD_ID()","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Formula (currently Long Text — you must change it)\n\nFormula: RECORD_ID()\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Formula\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"formula":"RECORD_ID()","referencedFieldIds":[],"result":{"type":"singleLineText"}}},{"originalId":"fldp57wYkq9XA2Vap","name":"Image_Assets","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fld1SBvW4moifNPjw","fieldIdInLinkedTable":"fldYpLJ7obmBNXdoE","result":{"type":"multipleAttachments","options":{"isReversed":false}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Image\" in \"⚡️ Segments\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Image\" in \"⚡️ Segments\"\nFrom linked record field: \"⚡️ Segments\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fld1SBvW4moifNPjw","fieldIdInLinkedTable":"fldYpLJ7obmBNXdoE","result":{"type":"multipleAttachments","options":{"isReversed":false}}}},{"originalId":"fldP7d8ugAVqSr1Ua","name":"Video_Assets","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fld1SBvW4moifNPjw","fieldIdInLinkedTable":"fldqTNkk2QfLQZkB6","result":{"type":"multipleAttachments","options":{"isReversed":false}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Video\" in \"⚡️ Segments\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Video\" in \"⚡️ Segments\"\nFrom linked record field: \"⚡️ Segments\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fld1SBvW4moifNPjw","fieldIdInLinkedTable":"fldqTNkk2QfLQZkB6","result":{"type":"multipleAttachments","options":{"isReversed":false}}}}],"autoSystemFields":[{"originalId":"fldYA4dmKHEyfEC2N","name":"AUTO_ID","type":"autoNumber","description":""},{"originalId":"fldLsDIs6mCalUMEm","name":"Created","type":"createdTime","description":"","options":{"result":{"type":"dateTime","options":{"dateFormat":{"name":"local","format":"l"},"timeFormat":{"name":"12hour","format":"h:mma"},"timeZone":"client"}}}},{"originalId":"fldOqQ9CJjTph7Z8g","name":"Modified","type":"lastModifiedTime","description":"","options":{"isValid":true,"referencedFieldIds":[],"result":{"type":"dateTime","options":{"dateFormat":{"name":"local","format":"l"},"timeFormat":{"name":"12hour","format":"h:mma"},"timeZone":"client"}}}}],"inverseLinkFields":[]},{"originalId":"tbleAOSiVLYV1AUQL","name":"⚡️ Segments","description":"","primaryFieldId":"fldo5MMQtCMSZs8Gy","creatableFields":[{"originalId":"fldrSdkC9voSgZztH","name":"SRT Text","type":"multilineText","description":""},{"originalId":"fld7xB0xtos6gcfIv","name":"Start Time","type":"duration","description":"","options":{"durationFormat":"h:mm:ss.SS"}},{"originalId":"fldSYoCvcInKPMm52","name":"End Time","type":"duration","description":"","options":{"durationFormat":"h:mm:ss.SS"}},{"originalId":"fldO5BurMLsez15U0","name":"B-Roll","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldSdShhRdUE01caJ","name":"AI Image Prompt","type":"multilineText","description":""},{"originalId":"fldbD1yVJfcY6YC04","name":"Generate Image","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldZsNMhsIacQcKUc","name":"Model","type":"singleSelect","description":"","options":{"choices":[{"name":"NanoBanana","color":"yellowLight2"},{"name":"Seedream","color":"purpleLight2"},{"name":"Rejected","color":"redBright"},{"name":"Select Model","color":"tealLight2"}]}},{"originalId":"fldYpLJ7obmBNXdoE","name":"Image","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fldT2wF37358oeTgO","name":"AI Video Prompt","type":"multilineText","description":""},{"originalId":"fld3w0i4ne5ayxAnj","name":"Generate_Video","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldqTNkk2QfLQZkB6","name":"Video","type":"multipleAttachments","description":"","options":{"isReversed":false}},{"originalId":"fldbqNwSLQxDsTHF8","name":"Scale","type":"checkbox","description":"","options":{"icon":"check","color":"greenBright"}},{"originalId":"fldAfxEYjQqdRsUTy","name":"SRT Segment ID","type":"singleLineText","description":""},{"originalId":"fldmuOltVlWFkx5Is","name":"SRT Segment","type":"multilineText","description":""},{"originalId":"fldezKIMhG83bpmiB","name":"Timestamp","type":"singleLineText","description":""},{"originalId":"flduPA18S3KHuTziE","name":"Image ID","type":"singleLineText","description":""},{"originalId":"fld6v3W478SD62yon","name":"Upscale ID","type":"singleLineText","description":""},{"originalId":"fldK5c0WVJjfOfwwl","name":"Video ID","type":"singleLineText","description":""}],"linkFields":[{"originalId":"fldn4qa0kCI6xewxo","name":"Content","type":"multipleRecordLinks","description":"","options":{"linkedTableId":"tbl0u0PXSJ61Axdq1","isReversed":false,"prefersSingleRecordLink":false,"inverseLinkFieldId":"fld1SBvW4moifNPjw"},"linkedTableId":"tbl0u0PXSJ61Axdq1","prefersSingleRecordLink":false,"linkedTableName":"✅ Content"}],"manualFields":[{"originalId":"fldo5MMQtCMSZs8Gy","name":"Segments_ID","type":"formula","description":"","options":{"isValid":true,"formula":"\"S\"&{fldKlb8KOEKBmiR9Z}","referencedFieldIds":["fldKlb8KOEKBmiR9Z"],"result":{"type":"singleLineText"}},"manualType":"Formula","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Formula: Formula: \"S\"&{fldKlb8KOEKBmiR9Z}","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Formula (currently Long Text — you must change it)\n\nFormula: \"S\"&{fldKlb8KOEKBmiR9Z}\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Formula\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"formula":"\"S\"&{fldKlb8KOEKBmiR9Z}","referencedFieldIds":["fldKlb8KOEKBmiR9Z"],"result":{"type":"singleLineText"}}},{"originalId":"fldda9ffbea3aKZof","name":"Duration","type":"formula","description":"","options":{"isValid":true,"formula":"CEILING({fldSYoCvcInKPMm52} - {fld7xB0xtos6gcfIv})","referencedFieldIds":["fldSYoCvcInKPMm52","fld7xB0xtos6gcfIv"],"result":{"type":"number","options":{"precision":0}}},"manualType":"Formula","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Formula: Formula: CEILING({fldSYoCvcInKPMm52} - {fld7xB0xtos6gcfIv})","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Formula (currently Long Text — you must change it)\n\nFormula: CEILING({fldSYoCvcInKPMm52} - {fld7xB0xtos6gcfIv})\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Formula\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"formula":"CEILING({fldSYoCvcInKPMm52} - {fld7xB0xtos6gcfIv})","referencedFieldIds":["fldSYoCvcInKPMm52","fld7xB0xtos6gcfIv"],"result":{"type":"number","options":{"precision":0}}}},{"originalId":"flddTthsXuZqmIZTS","name":"Aspect Ratio (from Content)","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldZcU9gsOJ8uN7mr","result":{"type":"singleSelect","options":{"choices":[{"id":"selaeTO1tJMxRAAUB","name":"9:16","color":"blueLight2"},{"id":"selB04Q9scePf6LAH","name":"16:9","color":"cyanLight2"},{"id":"selzpfxYJpXy14fRw","name":"1:1","color":"tealLight2"}]}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Aspect Ratio\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Aspect Ratio\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldZcU9gsOJ8uN7mr","result":{"type":"singleSelect","options":{"choices":[{"id":"selaeTO1tJMxRAAUB","name":"9:16","color":"blueLight2"},{"id":"selB04Q9scePf6LAH","name":"16:9","color":"cyanLight2"},{"id":"selzpfxYJpXy14fRw","name":"1:1","color":"tealLight2"}]}}}},{"originalId":"fldx8UieEqW18dTvu","name":"Active (from Content)","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld0Nawd09ha44Ev6","result":{"type":"checkbox","options":{"icon":"check","color":"greenBright"}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Active\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Active\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld0Nawd09ha44Ev6","result":{"type":"checkbox","options":{"icon":"check","color":"greenBright"}}}},{"originalId":"fldFZu5ouZcHaijoE","name":"RECORD_ID","type":"formula","description":"","options":{"isValid":true,"formula":"RECORD_ID()","referencedFieldIds":[],"result":{"type":"singleLineText"}},"manualType":"Formula","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Formula: Formula: RECORD_ID()","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Formula (currently Long Text — you must change it)\n\nFormula: RECORD_ID()\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Formula\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"formula":"RECORD_ID()","referencedFieldIds":[],"result":{"type":"singleLineText"}}},{"originalId":"fldE7H7EWbjKrGKPJ","name":"Transcript","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldgOKnrxU2yEZiVk","result":{"type":"multilineText"}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Transcript\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Transcript\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldgOKnrxU2yEZiVk","result":{"type":"multilineText"}}},{"originalId":"fldBLQekP8IDaso3c","name":"Width","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldA7rUSepYfNWRxg","result":{"type":"number","options":{"precision":0}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Width\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Width\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldA7rUSepYfNWRxg","result":{"type":"number","options":{"precision":0}}}},{"originalId":"fldWf1kWAhZNmm47Q","name":"Height","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld5CMWGa8AEsoTme","result":{"type":"number","options":{"precision":0}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Height\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Height\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld5CMWGa8AEsoTme","result":{"type":"number","options":{"precision":0}}}},{"originalId":"fldkZjwElKpX9fjgN","name":"Media File 2 (from Content)","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld9oaTAG4Yj4FMxT","result":{"type":"multipleAttachments","options":{"isReversed":false}}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"Media File 2\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"Media File 2\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld9oaTAG4Yj4FMxT","result":{"type":"multipleAttachments","options":{"isReversed":false}}}},{"originalId":"fldEuOuNqjrvYN6wP","name":"BROLL Style Analisys","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld6lF4PBMUJv8JjD","result":{"type":"multilineText"}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"BROLL Style Analysis\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"BROLL Style Analysis\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fld6lF4PBMUJv8JjD","result":{"type":"multilineText"}}},{"originalId":"fldmJ9Rv6VMjtib1u","name":"user_request (from Content)","type":"multipleLookupValues","description":"","options":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldfYs4q0cNTp8wlc","result":{"type":"multilineText"}},"manualType":"Lookup","manualDescription":"⚠️ MANUAL SETUP REQUIRED — Lookup: Lookup field: \"user_request\" in \"✅ Content\"","manualCellInstructions":"⚠️ MANUAL SETUP REQUIRED\n\nField type: Lookup (currently Long Text — you must change it)\n\nLookup field: \"user_request\" in \"✅ Content\"\nFrom linked record field: \"Content\" field\n\nSteps:\n1. Click this field's column header\n2. Select \"Customize field type\"\n3. Change the type from \"Long text\" to \"Lookup\"\n4. Configure using the information above\n5. Click \"Save\"\n6. Delete this instruction row when you're done with ALL fields in this table","originalOptions":{"isValid":true,"recordLinkFieldId":"fldn4qa0kCI6xewxo","fieldIdInLinkedTable":"fldfYs4q0cNTp8wlc","result":{"type":"multilineText"}}}],"autoSystemFields":[{"originalId":"fldeLX8tHtZDy2yIJ","name":"Modified","type":"lastModifiedTime","description":"","options":{"isValid":true,"referencedFieldIds":[],"result":{"type":"dateTime","options":{"dateFormat":{"name":"local","format":"l"},"timeFormat":{"name":"12hour","format":"h:mma"},"timeZone":"client"}}}},{"originalId":"fldKlb8KOEKBmiR9Z","name":"AUTO_ID","type":"autoNumber","description":""}],"inverseLinkFields":[]},{"originalId":"tblEJUFkXLm71uNhP","name":"🧩 Variables","description":"","primaryFieldId":"fldITwUbkbJHXLQ4Q","creatableFields":[{"originalId":"fldITwUbkbJHXLQ4Q","name":"Name","type":"singleLineText","description":""},{"originalId":"fldmiD6Q8mTsMwdpZ","name":"Value","type":"singleLineText","description":""},{"originalId":"fldOD8gh4r9oUmae5","name":"Group","type":"singleLineText","description":""}],"linkFields":[],"manualFields":[],"autoSystemFields":[],"inverseLinkFields":[]}]}</script>
+
+  <div class="max-w-3xl mx-auto py-8 px-4">
+
+    <!-- Header -->
+    <div id="header" class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900 mb-1" id="base-name"></h1>
+      <p class="text-gray-500 text-sm">Airtable Schema Installer</p>
+    </div>
+
+    <!-- Schema Preview -->
+    <div id="preview" class="mb-8">
+      <h2 class="text-lg font-semibold text-gray-800 mb-3">What will be created</h2>
+      <div id="table-list" class="space-y-3"></div>
+    </div>
+
+    <!-- Warnings -->
+    <div id="warnings" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+      <h3 class="text-amber-800 font-medium mb-2">Manual setup required for some fields</h3>
+      <p class="text-amber-700 text-sm mb-2">
+        The following field types cannot be created automatically. They will be created as
+        "Long Text" placeholders with instructions in the cell and field description.
+      </p>
+      <ul id="warning-list" class="text-amber-700 text-sm space-y-1"></ul>
+    </div>
+
+    <!-- Credentials Form -->
+    <div id="form-section" class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Your Airtable Credentials</h2>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="api-key">
+          Personal Access Token
+        </label>
+        <input
+          type="password"
+          id="api-key"
+          placeholder="patXXXXXXXXXXXXXXXX.XXXXXXXXXXXXXXX"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+        <p class="text-xs text-gray-500 mt-1">
+          Get yours at
+          <a href="https://airtable.com/create/tokens" target="_blank" class="text-blue-600 underline">airtable.com/create/tokens</a>.
+          Needs <code class="bg-gray-100 px-1 rounded">schema.bases:write</code> and <code class="bg-gray-100 px-1 rounded">data.records:write</code> scopes.
+        </p>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="base-id">
+          Target Base ID
+        </label>
+        <input
+          type="text"
+          id="base-id"
+          placeholder="appXXXXXXXXXXXXXX"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+        <p class="text-xs text-gray-500 mt-1">
+          Open your (empty) base in Airtable. The Base ID is in the URL: airtable.com/<strong>appXXXXXX</strong>/...
+        </p>
+      </div>
+
+      <button
+        id="start-btn"
+        class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Start Installation
+      </button>
+    </div>
+
+    <!-- Progress Log -->
+    <div id="progress-section" class="hidden">
+      <div class="flex items-center gap-2 mb-3">
+        <div id="progress-spinner" class="spinner"></div>
+        <h2 class="text-lg font-semibold text-gray-800" id="progress-title">Installing...</h2>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+
+      <div id="log" class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto space-y-1"></div>
+    </div>
+
+    <!-- Final Summary -->
+    <div id="summary-section" class="hidden mt-6 bg-green-50 border border-green-200 rounded-lg p-6">
+      <h2 class="text-green-800 text-lg font-semibold mb-2">Installation Complete</h2>
+      <div id="summary-content" class="text-green-700 text-sm"></div>
+    </div>
+
+    <!-- Error Summary -->
+    <div id="error-section" class="hidden mt-6 bg-red-50 border border-red-200 rounded-lg p-6">
+      <h2 class="text-red-800 text-lg font-semibold mb-2">Installation Failed</h2>
+      <p id="error-content" class="text-red-700 text-sm"></p>
+    </div>
+
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Configuration ──
+  const PROXY_URL = "https://airtable-replicator-proxy.8digit.workers.dev";
+  const RATE_LIMIT_DELAY = 250; // ms between API calls (4/sec, safely under 5/sec limit)
+  const RETRY_DELAY = 31000;    // ms to wait on 429 (Airtable requires 30s)
+  const MAX_RETRIES = 2;
+
+  // ── Load Schema ──
+  const schemaEl = document.getElementById("schema-data");
+  let SCHEMA;
+  try {
+    SCHEMA = JSON.parse(schemaEl.textContent);
+  } catch (e) {
+    document.body.innerHTML = '<div class="p-8 text-red-600">Error: Could not parse embedded schema data.</div>';
+    return;
+  }
+
+  // ── Render Preview ──
+  document.getElementById("base-name").textContent = SCHEMA.name;
+  document.title = `Install: ${SCHEMA.name}`;
+
+  const tableListEl = document.getElementById("table-list");
+  const warningsEl = document.getElementById("warnings");
+  const warningListEl = document.getElementById("warning-list");
+  let hasManualFields = false;
+
+  for (const table of SCHEMA.tables) {
+    const autoSystemFields = table.autoSystemFields || [];
+    const allFieldCount =
+      table.creatableFields.length +
+      table.linkFields.length +
+      table.manualFields.length +
+      autoSystemFields.length;
+
+    const card = document.createElement("div");
+    card.className = "bg-white rounded-lg border border-gray-200 p-4";
+
+    let fieldsHtml = '<div class="mt-2 space-y-1">';
+    for (const f of table.creatableFields) {
+      fieldsHtml += `<div class="text-xs text-gray-500 flex gap-2"><span class="text-gray-400 w-24 shrink-0">${escapeHtml(f.type)}</span><span>${escapeHtml(f.name)}</span></div>`;
+    }
+    for (const f of table.linkFields) {
+      fieldsHtml += `<div class="text-xs text-gray-500 flex gap-2"><span class="text-blue-400 w-24 shrink-0">link</span><span>${escapeHtml(f.name)} → ${escapeHtml(f.linkedTableName)}</span></div>`;
+    }
+    for (const f of table.manualFields) {
+      fieldsHtml += `<div class="text-xs text-gray-500 flex gap-2"><span class="text-amber-500 w-24 shrink-0">${escapeHtml(f.manualType)}</span><span>${escapeHtml(f.name)} <span class="text-amber-600">(manual setup)</span></span></div>`;
+      hasManualFields = true;
+    }
+    for (const f of autoSystemFields) {
+      fieldsHtml += `<div class="text-xs text-gray-500 flex gap-2"><span class="text-purple-400 w-24 shrink-0">${escapeHtml(f.type)}</span><span>${escapeHtml(f.name)} <span class="text-purple-500">(add manually — 1 click)</span></span></div>`;
+    }
+    fieldsHtml += "</div>";
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between cursor-pointer" onclick="this.parentElement.querySelector('.fields-detail').classList.toggle('hidden')">
+        <div>
+          <span class="font-medium text-gray-800">${escapeHtml(table.name)}</span>
+          <span class="text-gray-400 text-sm ml-2">${allFieldCount} fields</span>
+        </div>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      <div class="fields-detail hidden">${fieldsHtml}</div>
+    `;
+    tableListEl.appendChild(card);
+
+    // Populate warnings
+    for (const f of table.manualFields) {
+      const li = document.createElement("li");
+      li.textContent = `${table.name} → ${f.name} (${f.manualType})`;
+      warningListEl.appendChild(li);
+    }
+  }
+
+  if (hasManualFields) {
+    warningsEl.classList.remove("hidden");
+  }
+
+  // ── UI Helpers ──
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  const logEl = document.getElementById("log");
+  function log(msg, type = "info") {
+    const colors = { info: "text-gray-300", success: "text-green-400", warn: "text-amber-400", error: "text-red-400" };
+    const entry = document.createElement("div");
+    entry.className = `log-entry ${colors[type] || colors.info}`;
+    entry.textContent = msg;
+    logEl.appendChild(entry);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function setProgress(fraction) {
+    document.getElementById("progress-bar").style.width = `${Math.round(fraction * 100)}%`;
+  }
+
+  // ── Airtable API via Proxy ──
+  async function airtableRequest(method, path, body, apiKey) {
+    const targetUrl = `https://api.airtable.com/v0${path}`;
+    const fetchOpts = {
+      method: "POST", // We always POST to the proxy; actual method is in the forwarded request
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+        "X-Airtable-Target-Url": targetUrl,
+        "X-Airtable-Method": method,
+      },
+    };
+    if (body) {
+      fetchOpts.body = JSON.stringify(body);
+    }
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const res = await fetch(PROXY_URL, fetchOpts);
+
+      if (res.status === 429) {
+        log(`Rate limited. Waiting 31 seconds before retry...`, "warn");
+        await sleep(RETRY_DELAY);
+        continue;
+      }
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const errMsg = data?.error?.message || data?.error || `HTTP ${res.status}`;
+        throw new Error(errMsg);
+      }
+
+      return data;
+    }
+
+    throw new Error("Max retries exceeded after rate limiting");
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  // ── Build Field Payload for Table Creation ──
+  function buildCreatableFieldPayload(field) {
+    const payload = {
+      name: field.name,
+      type: field.type,
+    };
+    if (field.description) {
+      payload.description = field.description;
+    }
+
+    // Include type-specific options
+    if (field.options) {
+      const opts = JSON.parse(JSON.stringify(field.options));
+      // Remove Airtable-internal properties that aren't accepted on create
+      delete opts.isReversed;
+      delete opts.inverseLinkFieldId;
+      delete opts.linkedTableId;
+      delete opts.result; // formula result type
+      delete opts.fieldIdInLinkedTable;
+      delete opts.recordLinkFieldId;
+
+      // Strip auto-generated IDs from select choices
+      if (opts.choices) {
+        opts.choices = opts.choices.map(({ name, color }) => {
+          const c = { name };
+          if (color) c.color = color;
+          return c;
+        });
+      }
+
+      // Only include if there are remaining options
+      if (Object.keys(opts).length > 0) {
+        payload.options = opts;
+      }
+    }
+
+    return payload;
+  }
+
+  function buildManualFieldPayload(field) {
+    return {
+      name: field.name,
+      type: "multilineText",
+      description: field.manualDescription,
+    };
+  }
+
+  // ── Core Replication Algorithm ──
+  async function replicate(schema, apiKey, baseId) {
+    const tables = schema.tables;
+    const tableNameToNewId = {};
+    const results = { tablesCreated: 0, fieldsCreated: 0, linksCreated: 0, manualFields: 0, instructionRecords: 0, errors: [] };
+
+    // Count total steps for progress bar
+    const totalSteps =
+      tables.length + // table creation
+      tables.reduce((sum, t) => sum + t.linkFields.length, 0) + // link fields
+      tables.filter((t) => t.manualFields.length > 0 || (t.autoSystemFields || []).length > 0).length; // instruction records
+    let currentStep = 0;
+
+    // ── Phase 1: Create tables with non-link, non-manual fields + manual fields as Long Text ──
+    log("Phase 1: Creating tables...", "info");
+
+    for (const table of tables) {
+      try {
+        // Find primary field
+        const primaryField = table.creatableFields.find((f) => f.originalId === table.primaryFieldId);
+        const otherCreatableFields = table.creatableFields.filter((f) => f.originalId !== table.primaryFieldId);
+
+        // Build fields array: primary first, then other creatable, then manual (as Long Text)
+        const fields = [];
+
+        if (primaryField) {
+          fields.push(buildCreatableFieldPayload(primaryField));
+        } else {
+          // Fallback: if primary field is a manual type, create it as singleLineText
+          const manualPrimary = table.manualFields.find((f) => f.originalId === table.primaryFieldId);
+          if (manualPrimary) {
+            fields.push({
+              name: manualPrimary.name,
+              type: "singleLineText",
+              description: manualPrimary.manualDescription,
+            });
+          } else {
+            // Last resort: create a default primary field
+            fields.push({ name: "Name", type: "singleLineText" });
+          }
+        }
+
+        for (const f of otherCreatableFields) {
+          fields.push(buildCreatableFieldPayload(f));
+        }
+
+        for (const f of table.manualFields) {
+          // Skip if this was already used as primary field
+          if (f.originalId === table.primaryFieldId) continue;
+          fields.push(buildManualFieldPayload(f));
+        }
+
+        const body = { name: table.name, fields };
+        if (table.description) {
+          body.description = table.description;
+        }
+
+        const response = await airtableRequest("POST", `/meta/bases/${baseId}/tables`, body, apiKey);
+        tableNameToNewId[table.name] = response.id;
+
+        const fieldCount = fields.length;
+        log(`  Created "${table.name}" with ${fieldCount} field(s)`, "success");
+        results.tablesCreated++;
+        results.fieldsCreated += fieldCount;
+        results.manualFields += table.manualFields.length;
+
+      } catch (err) {
+        log(`  FAILED to create "${table.name}": ${err.message}`, "error");
+        results.errors.push(`Table "${table.name}": ${err.message}`);
+      }
+
+      currentStep++;
+      setProgress(currentStep / totalSteps);
+      await sleep(RATE_LIMIT_DELAY);
+    }
+
+    // ── Phase 2: Add link fields ──
+    const tablesWithLinks = tables.filter((t) => t.linkFields.length > 0);
+    if (tablesWithLinks.length > 0) {
+      log("Phase 2: Adding link fields...", "info");
+
+      for (const table of tables) {
+        const newTableId = tableNameToNewId[table.name];
+        if (!newTableId) continue; // Table creation failed
+
+        for (const linkField of table.linkFields) {
+          try {
+            const linkedTableNewId = tableNameToNewId[linkField.linkedTableName];
+            if (!linkedTableNewId) {
+              throw new Error(`Linked table "${linkField.linkedTableName}" was not created`);
+            }
+
+            const body = {
+              name: linkField.name,
+              type: "multipleRecordLinks",
+              options: {
+                linkedTableId: linkedTableNewId,
+              },
+            };
+            if (linkField.prefersSingleRecordLink) {
+              body.options.prefersSingleRecordLink = true;
+            }
+
+            await airtableRequest("POST", `/meta/bases/${baseId}/tables/${newTableId}/fields`, body, apiKey);
+            log(`  Added link "${linkField.name}" on "${table.name}" → "${linkField.linkedTableName}"`, "success");
+            results.linksCreated++;
+
+          } catch (err) {
+            log(`  FAILED link "${linkField.name}" on "${table.name}": ${err.message}`, "error");
+            results.errors.push(`Link "${linkField.name}" on "${table.name}": ${err.message}`);
+          }
+
+          currentStep++;
+          setProgress(currentStep / totalSteps);
+          await sleep(RATE_LIMIT_DELAY);
+        }
+      }
+    }
+
+    // ── Phase 3: Create instruction records for manual + autoSystem fields ──
+    const tablesNeedingInstructions = tables.filter((t) =>
+      t.manualFields.length > 0 || (t.autoSystemFields || []).length > 0
+    );
+    if (tablesNeedingInstructions.length > 0) {
+      log("Phase 3: Adding setup instructions...", "info");
+
+      for (const table of tablesNeedingInstructions) {
+        const newTableId = tableNameToNewId[table.name];
+        if (!newTableId) continue;
+        const autoSystemFields = table.autoSystemFields || [];
+
+        try {
+          // Build a record with instructions in each manual field
+          const recordFields = {};
+
+          // Find the primary field name for this table
+          const primaryField = table.creatableFields.find((f) => f.originalId === table.primaryFieldId);
+          const primaryFieldName = primaryField ? primaryField.name : table.manualFields.find((f) => f.originalId === table.primaryFieldId)?.name || "Name";
+
+          // Set primary field to identify this as an instruction row
+          recordFields[primaryFieldName] = "⚠️ SETUP INSTRUCTIONS — Delete this row when done";
+
+          // Set each manual field with its instructions
+          for (const f of table.manualFields) {
+            if (f.originalId === table.primaryFieldId) {
+              recordFields[f.name] = "⚠️ SETUP INSTRUCTIONS — See field description";
+              continue;
+            }
+            recordFields[f.name] = f.manualCellInstructions;
+          }
+
+          // Build auto-system field instructions as a note in a writable field
+          // (auto-system fields don't exist yet, so we put the note in the primary field)
+          if (autoSystemFields.length > 0) {
+            const autoNote = autoSystemFields.map((f) => {
+              const typeLabels = {
+                autoNumber: "Auto number",
+                createdTime: "Created time",
+                lastModifiedTime: "Last modified time",
+                createdBy: "Created by",
+                lastModifiedBy: "Last modified by",
+              };
+              return `• "${f.name}" → Click "+" to add a field → Choose "${typeLabels[f.type] || f.type}"`;
+            }).join("\n");
+
+            const existing = recordFields[primaryFieldName];
+            recordFields[primaryFieldName] = existing + "\n\nAlso add these fields manually (1 click each):\n" + autoNote;
+          }
+
+          await airtableRequest(
+            "POST",
+            `/${baseId}/${encodeURIComponent(table.name)}`,
+            { records: [{ fields: recordFields }] },
+            apiKey
+          );
+
+          log(`  Added instruction record to "${table.name}"`, "success");
+          results.instructionRecords++;
+
+        } catch (err) {
+          log(`  FAILED to add instructions to "${table.name}": ${err.message}`, "warn");
+          // Non-fatal: the fields still got created, just no instruction record
+        }
+
+        currentStep++;
+        setProgress(currentStep / totalSteps);
+        await sleep(RATE_LIMIT_DELAY);
+      }
+    }
+
+    return results;
+  }
+
+  // ── Start Button Handler ──
+  document.getElementById("start-btn").addEventListener("click", async function () {
+    const apiKey = document.getElementById("api-key").value.trim();
+    const baseId = document.getElementById("base-id").value.trim();
+
+    if (!apiKey) {
+      alert("Please enter your Airtable Personal Access Token.");
+      return;
+    }
+    if (!baseId || !baseId.startsWith("app")) {
+      alert("Please enter a valid Base ID (starts with 'app').");
+      return;
+    }
+    if (PROXY_URL.includes("YOUR-WORKER")) {
+      alert("This install page has not been configured with a CORS proxy URL. Contact your instructor.");
+      return;
+    }
+
+    // Disable form, show progress
+    this.disabled = true;
+    this.textContent = "Installing...";
+    document.getElementById("form-section").classList.add("opacity-50");
+    document.getElementById("progress-section").classList.remove("hidden");
+
+    try {
+      log(`Starting installation of "${SCHEMA.name}"...`);
+      log(`Target base: ${baseId}`);
+      log(`Tables to create: ${SCHEMA.tables.map((t) => t.name).join(", ")}`);
+      log("");
+
+      const results = await replicate(SCHEMA, apiKey, baseId);
+
+      // Show summary
+      setProgress(1);
+      document.getElementById("progress-spinner").classList.add("hidden");
+      document.getElementById("progress-title").textContent = "Done!";
+
+      if (results.errors.length === 0) {
+        log("");
+        log("Installation complete!", "success");
+        const summaryEl = document.getElementById("summary-section");
+        summaryEl.classList.remove("hidden");
+        document.getElementById("summary-content").innerHTML = `
+          <ul class="space-y-1 mt-2">
+            <li>Tables created: <strong>${results.tablesCreated}</strong></li>
+            <li>Fields created: <strong>${results.fieldsCreated}</strong></li>
+            <li>Link fields added: <strong>${results.linksCreated}</strong></li>
+            ${results.manualFields > 0 ? `<li>Fields needing manual setup: <strong>${results.manualFields}</strong> (check the instruction rows)</li>` : ""}
+          </ul>
+          ${results.manualFields > 0 ? '<p class="mt-3 text-amber-700 bg-amber-50 border border-amber-200 rounded p-2">Some fields need manual configuration. Look for the instruction row in each table and follow the steps. Delete the instruction row when done.</p>' : ""}
+        `;
+      } else {
+        log("");
+        log(`Completed with ${results.errors.length} error(s).`, "error");
+        const errorEl = document.getElementById("error-section");
+        errorEl.classList.remove("hidden");
+        document.getElementById("error-content").innerHTML =
+          `<p class="mb-2">Some operations failed:</p><ul class="list-disc pl-5 space-y-1">${results.errors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul>`;
+      }
+
+    } catch (err) {
+      log(`Fatal error: ${err.message}`, "error");
+      document.getElementById("progress-spinner").classList.add("hidden");
+      document.getElementById("progress-title").textContent = "Failed";
+      const errorEl = document.getElementById("error-section");
+      errorEl.classList.remove("hidden");
+      document.getElementById("error-content").textContent = err.message;
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
