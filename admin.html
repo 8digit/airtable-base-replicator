@@ -21,7 +21,7 @@
     <h2 class="text-lg font-semibold text-gray-800 mb-4">Your Settings</h2>
 
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-1" for="admin-key">Personal Access Token</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="admin-key">Airtable Personal Access Token</label>
       <input type="password" id="admin-key" placeholder="patXXXXXXXXXXXXXXXX.XXXXXXX"
         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
       <p class="text-xs text-gray-500 mt-1">Saved locally in your browser. Never sent anywhere except Airtable's API (via your proxy).</p>
@@ -32,6 +32,25 @@
       <input type="text" id="admin-proxy" placeholder="https://airtable-replicator-proxy.8digit.workers.dev"
         class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
       <p class="text-xs text-gray-500 mt-1">Your Cloudflare Worker URL. Saved for future visits.</p>
+    </div>
+
+    <hr class="my-4 border-gray-200">
+    <p class="text-xs text-gray-400 uppercase font-semibold mb-3">GitHub Pages (for one-click deploy)</p>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="admin-gh-token">GitHub Token</label>
+      <input type="password" id="admin-gh-token" placeholder="ghp_XXXXXXXXXXXXXXXXXXXX"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <p class="text-xs text-gray-500 mt-1">
+        A <a href="https://github.com/settings/tokens/new?scopes=repo&description=Airtable+Replicator+Deploy" target="_blank" class="text-blue-600 underline">GitHub Personal Access Token</a> with <code class="bg-gray-100 px-1 rounded">repo</code> scope. Saved locally.
+      </p>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="admin-gh-repo">GitHub Repo</label>
+      <input type="text" id="admin-gh-repo" placeholder="8digit/airtable-base-replicator"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <p class="text-xs text-gray-500 mt-1">Format: <code class="bg-gray-100 px-1 rounded">owner/repo-name</code>. Must have a <code class="bg-gray-100 px-1 rounded">gh-pages</code> branch.</p>
     </div>
 
     <button id="save-settings" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Save settings</button>
@@ -70,16 +89,47 @@
     </div>
   </div>
 
-  <!-- Schema Preview + Download -->
+  <!-- Schema Preview + Actions -->
   <div id="result-section" class="hidden">
     <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-4">
       <h2 class="text-green-800 text-lg font-semibold mb-2">Install page ready!</h2>
       <div id="schema-summary" class="text-green-700 text-sm mb-4"></div>
-      <button id="download-btn"
-        class="bg-green-600 text-white py-2 px-4 rounded-md font-medium hover:bg-green-700 transition-colors">
-        Download HTML File
-      </button>
-      <p class="text-xs text-gray-500 mt-2">Or host it on GitHub Pages / your LMS so students just click a link.</p>
+
+      <div class="flex gap-3 flex-wrap">
+        <button id="deploy-btn"
+          class="bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          🚀 Deploy to GitHub Pages
+        </button>
+        <button id="download-btn"
+          class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md font-medium hover:bg-gray-300 transition-colors">
+          💾 Download HTML File
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deploy Status -->
+  <div id="deploy-status" class="hidden mb-6">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="spinner"></div>
+      <span id="deploy-status-text" class="text-gray-700 text-sm">Deploying to GitHub Pages...</span>
+    </div>
+  </div>
+
+  <!-- Deploy Success — Student Link -->
+  <div id="deploy-result" class="hidden mb-6">
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <h2 class="text-blue-800 text-lg font-semibold mb-2">🎉 Deployed!</h2>
+      <p class="text-blue-700 text-sm mb-3">Share this link with your students:</p>
+      <div class="flex items-center gap-2">
+        <input type="text" id="student-link" readonly
+          class="flex-1 px-3 py-2 bg-white border border-blue-300 rounded-md text-sm text-blue-800 font-mono">
+        <button id="copy-link-btn"
+          class="bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+          📋 Copy
+        </button>
+      </div>
+      <p class="text-xs text-gray-500 mt-2">First deploy takes ~1 min to go live. Subsequent deploys are faster.</p>
     </div>
   </div>
 
@@ -102,14 +152,20 @@
   // ── LocalStorage persistence ──
   const keyEl = document.getElementById("admin-key");
   const proxyEl = document.getElementById("admin-proxy");
+  const ghTokenEl = document.getElementById("admin-gh-token");
+  const ghRepoEl = document.getElementById("admin-gh-repo");
 
   // Load saved settings
   keyEl.value = localStorage.getItem("atr_key") || "";
   proxyEl.value = localStorage.getItem("atr_proxy") || "";
+  ghTokenEl.value = localStorage.getItem("atr_gh_token") || "";
+  ghRepoEl.value = localStorage.getItem("atr_gh_repo") || "";
 
   document.getElementById("save-settings").addEventListener("click", () => {
     localStorage.setItem("atr_key", keyEl.value.trim());
     localStorage.setItem("atr_proxy", proxyEl.value.trim());
+    localStorage.setItem("atr_gh_token", ghTokenEl.value.trim());
+    localStorage.setItem("atr_gh_repo", ghRepoEl.value.trim());
     const confirm = document.getElementById("save-confirm");
     confirm.classList.remove("hidden");
     setTimeout(() => confirm.classList.add("hidden"), 2000);
@@ -332,6 +388,8 @@
     document.getElementById("status-section").classList.remove("hidden");
     document.getElementById("result-section").classList.add("hidden");
     document.getElementById("error-section").classList.add("hidden");
+    document.getElementById("deploy-status").classList.add("hidden");
+    document.getElementById("deploy-result").classList.add("hidden");
     document.getElementById("status-text").textContent = "Fetching schema from Airtable...";
 
     try {
@@ -384,6 +442,166 @@
     a.download = generatedFilename;
     a.click();
     URL.revokeObjectURL(url);
+  });
+
+  // ── Deploy to GitHub Pages ──
+  async function deployToGitHubPages(htmlContent, filename, ghToken, ghRepo) {
+    const [owner, repo] = ghRepo.split("/");
+    if (!owner || !repo) throw new Error("Invalid repo format. Use 'owner/repo-name'.");
+
+    const apiBase = `https://api.github.com/repos/${owner}/${repo}`;
+    const headers = {
+      "Authorization": `Bearer ${ghToken}`,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json",
+    };
+
+    // 1. Get the current gh-pages branch ref to find the latest commit
+    const refRes = await fetch(`${apiBase}/git/ref/heads/gh-pages`, { headers });
+    if (!refRes.ok) {
+      if (refRes.status === 404) throw new Error("Branch 'gh-pages' not found. Run ./deploy.sh once first to create it, or create it on GitHub.");
+      throw new Error(`GitHub API error: ${refRes.status}`);
+    }
+    const refData = await refRes.json();
+    const latestCommitSha = refData.object.sha;
+
+    // 2. Get the tree of the latest commit
+    const commitRes = await fetch(`${apiBase}/git/commits/${latestCommitSha}`, { headers });
+    const commitData = await commitRes.json();
+    const baseTreeSha = commitData.tree.sha;
+
+    // 3. Create a blob with the HTML content
+    const blobRes = await fetch(`${apiBase}/git/blobs`, {
+      method: "POST", headers,
+      body: JSON.stringify({ content: htmlContent, encoding: "utf-8" }),
+    });
+    const blobData = await blobRes.json();
+
+    // 4. Also build a simple index.html listing all install files
+    // First, get the current tree to find existing install files
+    const treeRes = await fetch(`${apiBase}/git/trees/${baseTreeSha}`, { headers });
+    const treeData = await treeRes.json();
+    const existingFiles = treeData.tree
+      .filter(item => item.path.startsWith("install-") && item.path.endsWith(".html"))
+      .map(item => item.path);
+    // Add the new file if not already there
+    if (!existingFiles.includes(filename)) {
+      existingFiles.push(filename);
+    }
+    existingFiles.sort();
+
+    // Build index HTML
+    const indexLinks = existingFiles.map(f => {
+      const name = f.replace("install-", "").replace(".html", "").replace(/-/g, " ");
+      const displayName = name.replace(/\b\w/g, c => c.toUpperCase());
+      return `    <a href="${f}" class="block p-4 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200 text-blue-600 hover:text-blue-800 font-medium">${displayName}</a>`;
+    }).join("\n");
+
+    const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airtable Base Replicator — Install Pages</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-8">
+  <div class="max-w-lg w-full">
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">📋 Install Pages</h1>
+    <p class="text-gray-500 mb-6">Click a link to open the installer for that course base.</p>
+    <div class="space-y-3">
+${indexLinks}
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const indexBlobRes = await fetch(`${apiBase}/git/blobs`, {
+      method: "POST", headers,
+      body: JSON.stringify({ content: indexHtml, encoding: "utf-8" }),
+    });
+    const indexBlobData = await indexBlobRes.json();
+
+    // 5. Create a new tree with both files
+    const newTreeRes = await fetch(`${apiBase}/git/trees`, {
+      method: "POST", headers,
+      body: JSON.stringify({
+        base_tree: baseTreeSha,
+        tree: [
+          { path: filename, mode: "100644", type: "blob", sha: blobData.sha },
+          { path: "index.html", mode: "100644", type: "blob", sha: indexBlobData.sha },
+        ],
+      }),
+    });
+    const newTreeData = await newTreeRes.json();
+
+    // 6. Create a new commit
+    const newCommitRes = await fetch(`${apiBase}/git/commits`, {
+      method: "POST", headers,
+      body: JSON.stringify({
+        message: `Deploy ${filename} — ${new Date().toISOString().slice(0, 16)}`,
+        tree: newTreeData.sha,
+        parents: [latestCommitSha],
+      }),
+    });
+    const newCommitData = await newCommitRes.json();
+
+    // 7. Update the gh-pages branch ref
+    await fetch(`${apiBase}/git/refs/heads/gh-pages`, {
+      method: "PATCH", headers,
+      body: JSON.stringify({ sha: newCommitData.sha }),
+    });
+
+    // Return the Pages URL
+    return `https://${owner}.github.io/${repo}/${filename}`;
+  }
+
+  document.getElementById("deploy-btn").addEventListener("click", async () => {
+    if (!generatedHtml || !generatedFilename) return;
+
+    const ghToken = ghTokenEl.value.trim();
+    const ghRepo = ghRepoEl.value.trim();
+
+    if (!ghToken) { alert("Enter your GitHub Token in Settings first."); return; }
+    if (!ghRepo || !ghRepo.includes("/")) { alert("Enter your GitHub Repo in Settings (format: owner/repo-name)."); return; }
+
+    // Save settings automatically
+    localStorage.setItem("atr_gh_token", ghToken);
+    localStorage.setItem("atr_gh_repo", ghRepo);
+
+    const btn = document.getElementById("deploy-btn");
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Deploying...';
+    document.getElementById("deploy-status").classList.remove("hidden");
+    document.getElementById("deploy-result").classList.add("hidden");
+    document.getElementById("error-section").classList.add("hidden");
+
+    try {
+      const studentUrl = await deployToGitHubPages(generatedHtml, generatedFilename, ghToken, ghRepo);
+
+      document.getElementById("deploy-status").classList.add("hidden");
+      document.getElementById("deploy-result").classList.remove("hidden");
+      document.getElementById("student-link").value = studentUrl;
+
+    } catch (err) {
+      document.getElementById("deploy-status").classList.add("hidden");
+      document.getElementById("error-section").classList.remove("hidden");
+      document.getElementById("error-text").textContent = `Deploy failed: ${err.message}`;
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Deploy to GitHub Pages';
+  });
+
+  // ── Copy link button ──
+  document.getElementById("copy-link-btn").addEventListener("click", () => {
+    const linkEl = document.getElementById("student-link");
+    linkEl.select();
+    navigator.clipboard.writeText(linkEl.value).then(() => {
+      const btn = document.getElementById("copy-link-btn");
+      btn.textContent = "✅ Copied!";
+      setTimeout(() => { btn.textContent = "📋 Copy"; }, 2000);
+    });
   });
 
 })();
