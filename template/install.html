@@ -243,7 +243,14 @@
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        const errMsg = data?.error?.message || data?.error || `HTTP ${res.status}`;
+        let errMsg = `HTTP ${res.status}`;
+        if (data?.error) {
+          if (typeof data.error === "string") {
+            errMsg = data.error;
+          } else {
+            errMsg = data.error.message || data.error.type || JSON.stringify(data.error);
+          }
+        }
         throw new Error(errMsg);
       }
 
@@ -381,6 +388,9 @@
     }
 
     // ── Phase 2: Add link fields ──
+    // Track which table pairs already have a link created (Airtable auto-creates the inverse)
+    const createdLinkPairs = new Map();
+
     const tablesWithLinks = tables.filter((t) => t.linkFields.length > 0);
     if (tablesWithLinks.length > 0) {
       log("Phase 2: Adding link fields...", "info");
@@ -390,6 +400,30 @@
         if (!newTableId) continue; // Table creation failed
 
         for (const linkField of table.linkFields) {
+          // Check if a link between these two tables was already created
+          // (Airtable auto-creates the inverse link field on the other table)
+          // We use "tableName <-> linkedTableName" as a pair key.
+          // For multiple links between the same pair, we count occurrences.
+          const pairKey = [table.name, linkField.linkedTableName].sort().join(" <-> ");
+          const pairCount = (createdLinkPairs.get(pairKey) || 0);
+          // Count how many link fields THIS direction has for this pair in the schema
+          const thisTableLinksToTarget = table.linkFields.filter(
+            (lf) => lf.linkedTableName === linkField.linkedTableName
+          ).length;
+          // Count how many the OTHER table has back to this table
+          const otherTable = tables.find((t) => t.name === linkField.linkedTableName);
+          const otherTableLinksBack = otherTable
+            ? otherTable.linkFields.filter((lf) => lf.linkedTableName === table.name).length
+            : 0;
+          // Total unique links expected between the pair
+          const totalInSchema = Math.max(thisTableLinksToTarget, otherTableLinksBack);
+          if (pairCount >= totalInSchema) {
+            log(`  Skipped "${linkField.name}" on "${table.name}" (inverse auto-created by Airtable)`, "info");
+            currentStep++;
+            setProgress(currentStep / totalSteps);
+            continue;
+          }
+
           try {
             const linkedTableNewId = tableNameToNewId[linkField.linkedTableName];
             if (!linkedTableNewId) {
@@ -408,6 +442,7 @@
             }
 
             await airtableRequest("POST", `/meta/bases/${baseId}/tables/${newTableId}/fields`, body, apiKey);
+            createdLinkPairs.set(pairKey, pairCount + 1);
             log(`  Added link "${linkField.name}" on "${table.name}" → "${linkField.linkedTableName}"`, "success");
             results.linksCreated++;
 
